@@ -25,7 +25,6 @@ int main(void)
   uint8_t colorR_dir =0 ,colorG_dir =0 ,colorB_dir =0 ;
   char lcd_text_buff[100];
 
-
   /* LCD initialization */
   LCD_Init();
   
