@@ -24,6 +24,15 @@ void GPIO_Configuration(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
+
+    /*-------------------------- GPIO Configuration for Push Button ----------------------------*/
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_OD ;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
     /*-------------------------- GPIO Configuration ----------------------------*/
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -31,6 +40,7 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
+
 
     /* Connect USART pins to AF */
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);   // USART1_TX
@@ -54,6 +64,35 @@ void LED_Initialization(void){
   GPIO_Init(GPIOG, &GPIO_InitStructure);
 
 }
+
+void Timer5_Initialization(void)
+{
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    /* Enable the TIM5 global Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel =  TIM5_IRQn ;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+
+    NVIC_Init(&NVIC_InitStructure);
+
+    /* -- Timer Configuration --------------------------------------------------- */
+    TIM_DeInit(TIM5);
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
+    TIM_TimeBaseStruct.TIM_Period = 50 - 1 ;  // Period 50000 -> 2Hz toggle   & modify period need remenber reset integrel time.
+    TIM_TimeBaseStruct.TIM_Prescaler = 840 - 1;  // Prescaled by 900 -> = 100000 Hz--->prescaler 840
+    TIM_TimeBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1; // Div by one -> 90 MHz
+    TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;
+
+    TIM_TimeBaseInit(TIM5, &TIM_TimeBaseStruct);
+    TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);
+    TIM_ARRPreloadConfig(TIM5, DISABLE);
+    TIM_Cmd(TIM5, ENABLE);
+}
+
 
 
 void PWM_Initialization(void)
@@ -112,6 +151,37 @@ void LED3_Toggle(void){
 
 }
 
+void LED3_Off(void){
+
+  GPIO_ResetBits(GPIOG,GPIO_Pin_13);
+
+}
+
+void LED3_On(void){
+
+  GPIO_SetBits(GPIOG,GPIO_Pin_13);
+
+}
+
+
+
+uint8_t freqflag=0;
+
+void TIM5_IRQHandler(void)
+{
+    if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
+    {
+        TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+        freqflag=1;
+    }
+}
+
+uint8_t PushButton_Read(void){
+
+    return GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0);
+
+}
+
 /**************************************************************************************/
 int main(void)
 {
@@ -124,10 +194,25 @@ int main(void)
     TIM1->CCR2 = 1000;
     while(1)
     {
+      if(freqflag==1)
+        {
+          freqflag=0;
+
+        if(PushButton_Read()){
+
+        LED3_On();
+        // Delay_1us(100000);
+        }else{
+
+        LED3_Off();
+        }
+
+
         TIM1->CCR2 = 1000 + pwm_out/65;
         //TIM_SetCompare2(TIM_TypeDef* TIMx, uint32_t Compare2);
         pwm_out++;
         Delay_1us(10);
+      }
 
     }
 

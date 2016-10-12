@@ -22,7 +22,7 @@ CFLAGS_INCLUDE=-I. \
 
 CFLAGS_DEFINE= \
         -D USE_STDPERIPH_DRIVER \
-        -D STM32F429_439xx
+        -D STM32F429_439xx \
         -D __FPU_PRESENT=1 \
         -D ARM_MATH_CM4 \
         -D __FPU_USED=1 \
@@ -68,6 +68,7 @@ OBJS=	./system_stm32f4xx.o \
         $(ST)/src/stm32f4xx_dma.o \
         $(ST)/src/stm32f4xx_flash.o \
         $(ST)/src/stm32f4xx_gpio.o \
+        $(ST)/src/stm32f4xx_spi.o \
         $(ST)/src/stm32f4xx_usart.o \
         $(ST)/src/stm32f4xx_adc.o \
         $(ST)/src/stm32f4xx_tim.o \

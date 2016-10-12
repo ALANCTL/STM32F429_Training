@@ -22,7 +22,7 @@ CFLAGS_INCLUDE=-I. \
 
 CFLAGS_DEFINE= \
         -D USE_STDPERIPH_DRIVER \
-        -D STM32F429_439xx
+        -D STM32F429_439xx \
         -D __FPU_PRESENT=1 \
         -D ARM_MATH_CM4 \
         -D __FPU_USED=1 \

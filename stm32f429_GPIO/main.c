@@ -99,22 +99,42 @@ int main(void)
     RCC_Configuration();
     GPIO_Configuration();
     LED_Initialization();
+    LED3_Off();
+
+      int a=0,b=0;
+      int led=0;
     
     while(1)
     {
 
-      if(PushButton_Read()){
+      //push a=1
+      while(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0) == Bit_RESET)
+        {a=1;}
 
-        LED3_Toggle();
-        Delay_1us(100000);
-      }else{
-
-        LED3_Off();
+      //a=1 , b=0 
+    if(a==1)
+    {
+      switch (b)
+        {
+          //case 0 (led =1 light and b=1(next push case runing case 1))
+          case 0:
+          led=1;
+          b=1;
+            break;
+          //case 1 (led 0 light off and b=0(next push case running case 0))
+          case 1:
+          led=0;
+          b=0;  
+            break;
+        }
       }
-      
-
+        //case 0 running then led=1 light up
+        if(led==1)LED3_On();
+        //case 1 running then led=0 light off
+        if(led==0)LED3_Off();
+        //a=0 next cycle don't go in if(a==1) and keep up last condition 
+        a=0;
     }
-
-    while(1); // Don't want to exit
+    // return 0;//for function use
 }
 
