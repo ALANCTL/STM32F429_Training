@@ -508,6 +508,7 @@ int main(void)
         int64_t OFF,SENS;
         int32_t Temp=0;
         int32_t Press=0; 
+        float temp_float=0;
         float testting_temp=0.0f;
         
 
@@ -519,40 +520,54 @@ int main(void)
         testting_temp=testting_temp*DIVIDED_ONE_THOUSAND*DIVIDED_POW_2_7;
         // testting_temp=testting_temp*;
 
+        // testting_temp=dT*DIVIDED_POW_2_23; 
+        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND; //
+
+
+        // testting_temp=(((C[5]>>4)*(C[6]>>4))>>7);
+        // Temp= 2000 + ((((D2>>6)*C[6])>>18)-(((C[5]>>4)*(C[6]>>4))>>7));
+
+        testting_temp=((C[5]*C[6])>>15);
+        Temp= (((uint64_t)D2*(uint64_t)C[6]))>>23;
+
+
+        temp_float= (float)((((double)D2*(double)C[6]))/8388608.0);
+
+
         OFF = (C[2]*POW_2_16) + testting_temp;
 
-        // sprintf((char *)buff, "%d,%6.9f,%d \r\n" ,D2,testting_temp,OFF);
-        // USART1_puts((char *)buff);
-        // for(j=0; j<100; j++)
-        // {
-        //   buff[j]==0;
-        // }
-
-        testting_temp=dT/DIVIDED_POW_2_7;
-        testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
-        SENS = (C[1]*POW_2_15 + testting_temp*C[3]);
-
-        testting_temp=dT*DIVIDED_POW_2_23; //0.028223276;//C[6]=49222 divided to pow2^23   0.00586771965
-        testting_temp=testting_temp*DIVIDED_ONE_THOUSAND; //
-        testting_temp=testting_temp*C[6];
-        Temp= 2000 + testting_temp;
-        // Temp=Temp*0.01;
-
-        testting_temp=D1*DIVIDED_POW_2_21;
-        testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
-        testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
-        // Press =  ((testting_temp*SENS) - OFF);  
-        // Press=Press*DIVIDED_POW_2_15;
-        // Press=Press*DIVIDED_ONE_THOUSAND;
-        Press = ((((D1 * SENS) / POW_2_21 - OFF) / POW_2_15));
-
-
-        sprintf((char *)buff, "%d,%d,%d,%f \r\n" ,D2,dT,Temp,testting_temp);
+        sprintf((char *)buff, "%d,%6.9f,%d \r\n" ,Temp,temp_float,testting_temp);
         USART1_puts((char *)buff);
         for(j=0; j<100; j++)
         {
           buff[j]==0;
         }
+
+        // testting_temp=dT/DIVIDED_POW_2_7;
+        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
+        // SENS = (C[1]*POW_2_15 + testting_temp*C[3]);
+
+        // testting_temp=dT*DIVIDED_POW_2_23; //0.028223276;//C[6]=49222 divided to pow2^23   0.00586771965
+        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND; //
+        // testting_temp=testting_temp*C[6];
+        // Temp= 2000 + testting_temp;
+        // // Temp=Temp*0.01;
+
+        // testting_temp=D1*DIVIDED_POW_2_21;
+        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
+        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
+        // // Press =  ((testting_temp*SENS) - OFF);  
+        // // Press=Press*DIVIDED_POW_2_15;
+        // // Press=Press*DIVIDED_ONE_THOUSAND;
+        // Press = ((((D1 * SENS) / POW_2_21 - OFF) / POW_2_15));
+
+
+        // sprintf((char *)buff, "%d,%d,%d,%f \r\n" ,D2,dT,Temp,testting_temp);
+        // USART1_puts((char *)buff);
+        // for(j=0; j<100; j++)
+        // {
+        //   buff[j]==0;
+        // }
 
         // sprintf((char *)buff, "%d,%6.9f,%d \r\n" ,D2,testting_temp,OFF);
         // USART1_puts((char *)buff);
