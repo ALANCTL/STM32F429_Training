@@ -511,25 +511,8 @@ int main(void)
         float testting_temp=0.0f;
         
 
-        testting_temp=C[5]*POW_2_8;//C5*256
-        dT = D2 - testting_temp;
-
-        testting_temp=dT*C[4];
-
-        testting_temp=testting_temp*DIVIDED_ONE_THOUSAND*DIVIDED_POW_2_7;
-        // testting_temp=testting_temp*;
-
-        // testting_temp=dT*DIVIDED_POW_2_23; 
-        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND; //
-
-
-        // testting_temp=(((C[5]>>4)*(C[6]>>4))>>7);
-        // Temp= 2000 + ((((D2>>6)*C[6])>>18)-(((C[5]>>4)*(C[6]>>4))>>7));
-
-        testting_temp=((C[5]*C[6])>>15);
-        Temp = 2000+((((uint64_t)D2*(uint64_t)C[6]))>>23)-((C[5]*C[6])>>15);
-
-        
+        //useful
+        // Temp = 2000+((((uint64_t)D2*(uint64_t)C[6]))>>23)-((C[5]*C[6])>>15);
 
         // Press = (float)(((double)D1*(double)C[1])/2097152);//first term ok
         // Press = ((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576)); //second term ok
@@ -540,6 +523,7 @@ int main(void)
         //ALl term
 
         // Press = ((float)(((double)D1*(double)C[1])/2097152))+((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576))-((float)(((double)((D1>>12)*(C[5]>>2))*(double)(C[3]>>2))/1048576))+((float)(((double)(C[4]*C[5]))/16384))-(2*C[2])-((float)(((double)((D2>>10)*C[4]))/4096));
+        
         LED3_Toggle();
         temp_float = 2000+(float)((((double)D2*(double)C[6]))/8388608.0)-((C[5]*C[6])>>15);//ok
         Press =(float)(((double)D1*(double)C[1])/2097152)+((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576));
@@ -557,24 +541,6 @@ int main(void)
         {
           buff[j]==0;
         }
-
-        // testting_temp=dT/DIVIDED_POW_2_7;
-        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
-        // SENS = (C[1]*POW_2_15 + testting_temp*C[3]);
-
-        // testting_temp=dT*DIVIDED_POW_2_23; //0.028223276;//C[6]=49222 divided to pow2^23   0.00586771965
-        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND; //
-        // testting_temp=testting_temp*C[6];
-        // Temp= 2000 + testting_temp;
-        // // Temp=Temp*0.01;
-
-        // testting_temp=D1*DIVIDED_POW_2_21;
-        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
-        // testting_temp=testting_temp*DIVIDED_ONE_THOUSAND;
-        // // Press =  ((testting_temp*SENS) - OFF);  
-        // // Press=Press*DIVIDED_POW_2_15;
-        // // Press=Press*DIVIDED_ONE_THOUSAND;
-        // Press = ((((D1 * SENS) / POW_2_21 - OFF) / POW_2_15));
 
 
         sprintf((char *)buff, "%d,%d \r\n" ,D1,D2);
