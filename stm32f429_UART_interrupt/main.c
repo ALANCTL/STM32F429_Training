@@ -529,8 +529,7 @@ int main(void)
         testting_temp=((C[5]*C[6])>>15);
         Temp = 2000+((((uint64_t)D2*(uint64_t)C[6]))>>23)-((C[5]*C[6])>>15);
 
-
-        temp_float = 2000+(float)((((double)D2*(double)C[6]))/8388608.0)-((C[5]*C[6])>>15);//ok
+        
 
         // Press = (float)(((double)D1*(double)C[1])/2097152);//first term ok
         // Press = ((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576)); //second term ok
@@ -539,14 +538,19 @@ int main(void)
         // Press = 2*C[2]; //five term ok
         // Press =((float)(((double)((D2>>10)*C[4]))/4096)); //six term ok
         //ALl term
-        
-        Press = ((float)(((double)D1*(double)C[1])/2097152))+((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576))-((float)(((double)((D1>>12)*(C[5]>>2))*(double)(C[3]>>2))/1048576))+((float)(((double)(C[4]*C[5]))/16384))-(2*C[2])-((float)(((double)((D2>>10)*C[4]))/4096));
 
+        // Press = ((float)(((double)D1*(double)C[1])/2097152))+((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576))-((float)(((double)((D1>>12)*(C[5]>>2))*(double)(C[3]>>2))/1048576))+((float)(((double)(C[4]*C[5]))/16384))-(2*C[2])-((float)(((double)((D2>>10)*C[4]))/4096));
+        LED3_Toggle();
+        temp_float = 2000+(float)((((double)D2*(double)C[6]))/8388608.0)-((C[5]*C[6])>>15);//ok
+        Press =(float)(((double)D1*(double)C[1])/2097152)+((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576));
+        Press =Press-((float)(((double)((D1>>12)*(C[5]>>2))*(double)(C[3]>>2))/1048576));
+        Press =Press +((float)(((double)(C[4]*C[5]))/16384));
+        Press =Press -(2*C[2]) -((float)(((double)((D2>>10)*C[4]))/4096));
         LED3_Toggle();
 
         OFF = (C[2]*POW_2_16) + testting_temp;
 
-        LED3_Toggle();
+        
         sprintf((char *)buff, "%d,%6.10f,%6.10f \r\n" ,Temp,temp_float,Press);
         USART1_puts((char *)buff);
         for(j=0; j<100; j++)
