@@ -420,7 +420,6 @@ int main(void)
       if(freqflag==1)
         {
            freqflag=0;
-        LED3_Toggle();
 
 
         uint8_t i=0;
@@ -507,7 +506,7 @@ int main(void)
         int32_t dT;
         int64_t OFF,SENS;
         int32_t Temp=0;
-        int32_t Press=0; 
+        float Press=0; 
         float temp_float=0;
         float testting_temp=0.0f;
         
@@ -528,15 +527,27 @@ int main(void)
         // Temp= 2000 + ((((D2>>6)*C[6])>>18)-(((C[5]>>4)*(C[6]>>4))>>7));
 
         testting_temp=((C[5]*C[6])>>15);
-        Temp= (((uint64_t)D2*(uint64_t)C[6]))>>23;
+        Temp = 2000+((((uint64_t)D2*(uint64_t)C[6]))>>23)-((C[5]*C[6])>>15);
 
 
-        temp_float= (float)((((double)D2*(double)C[6]))/8388608.0);
+        temp_float = 2000+(float)((((double)D2*(double)C[6]))/8388608.0)-((C[5]*C[6])>>15);//ok
 
+        // Press = (float)(((double)D1*(double)C[1])/2097152);//first term ok
+        // Press = ((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576)); //second term ok
+        // Press = (float)(((double)((D1>>12)*(C[5]>>2))*(double)(C[3]>>2))/1048576); //third term ok
+        // Press = ((float)(((double)(C[4]*C[5]))/16384)); //four term ok
+        // Press = 2*C[2]; //five term ok
+        // Press =((float)(((double)((D2>>10)*C[4]))/4096)); //six term ok
+        //ALl term
+        
+        Press = ((float)(((double)D1*(double)C[1])/2097152))+((float)(((double)((D1>>12)*(D2>>12))*(double)C[3])/1048576))-((float)(((double)((D1>>12)*(C[5]>>2))*(double)(C[3]>>2))/1048576))+((float)(((double)(C[4]*C[5]))/16384))-(2*C[2])-((float)(((double)((D2>>10)*C[4]))/4096));
+
+        LED3_Toggle();
 
         OFF = (C[2]*POW_2_16) + testting_temp;
 
-        sprintf((char *)buff, "%d,%6.9f,%d \r\n" ,Temp,temp_float,testting_temp);
+        LED3_Toggle();
+        sprintf((char *)buff, "%d,%6.10f,%6.10f \r\n" ,Temp,temp_float,Press);
         USART1_puts((char *)buff);
         for(j=0; j<100; j++)
         {
@@ -562,12 +573,12 @@ int main(void)
         // Press = ((((D1 * SENS) / POW_2_21 - OFF) / POW_2_15));
 
 
-        // sprintf((char *)buff, "%d,%d,%d,%f \r\n" ,D2,dT,Temp,testting_temp);
-        // USART1_puts((char *)buff);
-        // for(j=0; j<100; j++)
-        // {
-        //   buff[j]==0;
-        // }
+        sprintf((char *)buff, "%d,%d \r\n" ,D1,D2);
+        USART1_puts((char *)buff);
+        for(j=0; j<100; j++)
+        {
+          buff[j]==0;
+        }
 
         // sprintf((char *)buff, "%d,%6.9f,%d \r\n" ,D2,testting_temp,OFF);
         // USART1_puts((char *)buff);
